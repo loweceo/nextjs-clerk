@@ -1,7 +1,10 @@
+"use client";
 import { UserButton } from "@clerk/nextjs";
-import Link from "next/link";
+import Link from "next/dist/client/link";
+import useSyncUser from "../utils/syncUser";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  useSyncUser();
   return (
     <>
       <main className="flex bg-slate-950">
