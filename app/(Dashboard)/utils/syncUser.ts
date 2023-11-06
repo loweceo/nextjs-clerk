@@ -1,15 +1,12 @@
 "use client";
-// Assuming "use client" is a typo or an unknown directive, I'm omitting it.
 import { useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import connectSupabase from "./supabase/connectSupabase";
 import * as Atoms from "./recoilAtoms";
-import { useSetRecoilState } from "recoil"; // Corrected to useSetRecoilState instead of useResetRecoilState
+import { useSetRecoilState } from "recoil";
 
 const useSyncUser = () => {
-  const setUserIdState = useSetRecoilState(Atoms.userIdState);
-  const setUserNameState = useSetRecoilState(Atoms.userNameState);
-  const setUserEmailState = useSetRecoilState(Atoms.userEmailState);
+  const setUserState = useSetRecoilState(Atoms.userState);
   const supabase = connectSupabase();
   const { isSignedIn, user } = useUser();
 
@@ -17,9 +14,11 @@ const useSyncUser = () => {
     if (isSignedIn && user) {
       const upsertUser = async () => {
         // Set Recoil state
-        setUserIdState(user.id);
-        setUserNameState(user.username || "Unknown");
-        setUserEmailState(user.emailAddresses[0].emailAddress);
+        setUserState({
+          id: user.id,
+          name: user.username || "Unknown",
+          email: user.emailAddresses[0].emailAddress,
+        });
 
         // Upsert user data to Supabase
         try {
@@ -32,7 +31,7 @@ const useSyncUser = () => {
             },
             {
               onConflict: "user_id",
-            }
+            },
           );
 
           if (error) {
@@ -46,10 +45,7 @@ const useSyncUser = () => {
 
       upsertUser();
     }
-  }, [isSignedIn, user, supabase, setUserIdState, setUserNameState, setUserEmailState]);
-
-  // The hook should return something if it is expected to be used elsewhere
-  // If no value is to be returned, then it can be left as is.
+  }, [isSignedIn, user, supabase, setUserState]);
 };
 
 export default useSyncUser;
