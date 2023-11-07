@@ -8,7 +8,7 @@ export default function LayoutRecoilRoot({
 }) {
   return (
     <>
-      <RecoilRootWrapper>{children}</RecoilRootWrapper>
+      <RecoilRootWrapper>{children}</RecoilRootWrapper> 
     </>
   );
 }
